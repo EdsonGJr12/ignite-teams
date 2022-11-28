@@ -6,23 +6,32 @@ import { Filter } from "@components/Filter";
 import { Header } from "@components/Header";
 import { Highlight } from "@components/Highlight";
 import { Input } from "@components/Input";
-
-import { Container, Form, HeaderList, NumbersOfPlayers } from "./styles";
 import { PlayerCard } from "@components/PlayerCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
+
+import { useRoute } from "@react-navigation/native";
+
+import { Container, Form, HeaderList, NumberOfPlayers } from "./styles";
+
+type RouteParams = {
+    group: string;
+}
 
 export function Players() {
 
     const [players, setPlayers] = useState(["Edson", "Newton", "Haroldo", "Cássio", "Gabriel", "Andrea", "Luciana", "Johnatam"]);
     const [team, setTeam] = useState("Time A");
 
+    const route = useRoute();
+    const { group } = route.params as RouteParams;
+
     return (
         <Container>
             <Header showBackButton />
 
             <Highlight
-                title="Nome da turma"
+                title={group}
                 subtitle="Adicione a galera e separe os times"
             />
 
@@ -53,9 +62,9 @@ export function Players() {
 
                 />
 
-                <NumbersOfPlayers>
+                <NumberOfPlayers>
                     {players.length}
-                </NumbersOfPlayers>
+                </NumberOfPlayers>
             </HeaderList>
 
             <FlatList
