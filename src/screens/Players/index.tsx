@@ -19,13 +19,14 @@ import { playersGetByGroupAndTeam } from "@storage/player/playerGetByGroupAndTea
 import { PlayerStorageDTO } from "@storage/player/PlayerStorageDTO";
 import { playerRemoveByGroup } from "@storage/player/playerRemoveByGroup";
 import { groupRemoveByName } from "@storage/group/groupRemoveByName";
+import { Loading } from "@components/Loading";
 
 type RouteParams = {
     group: string;
 }
 
 export function Players() {
-
+    const [isLoading, setIsLoading] = useState(true);
     const [newPlayerName, setNewPlayerName] = useState("");
     const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
     const [team, setTeam] = useState("Time A");
@@ -75,11 +76,14 @@ export function Players() {
 
     async function fetchPlayersByTeam() {
         try {
+            setIsLoading(true);
             const playersByTeam = await playersGetByGroupAndTeam(group, team);
             setPlayers(playersByTeam);
         } catch (error) {
             console.error(error);
             Alert.alert("Pessoas", "Não foi possível obter as pessoas do time");
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -133,20 +137,23 @@ export function Players() {
             </Form>
 
             <HeaderList>
-                <FlatList
-                    data={["Time A", "Time B"]}
-                    keyExtractor={item => item}
-                    renderItem={({ item }) => (
-                        <Filter
-                            title={item}
-                            isActive={item === team}
-                            onPress={() => setTeam(item)}
-                        />
-                    )}
-                    horizontal
-                    showsVerticalScrollIndicator={false}
-
-                />
+                {isLoading ? (
+                    <Loading />
+                ) : (
+                    <FlatList
+                        data={["Time A", "Time B"]}
+                        keyExtractor={item => item}
+                        renderItem={({ item }) => (
+                            <Filter
+                                title={item}
+                                isActive={item === team}
+                                onPress={() => setTeam(item)}
+                            />
+                        )}
+                        horizontal
+                        showsVerticalScrollIndicator={false}
+                    />
+                )}
 
                 <NumberOfPlayers>
                     {players.length}
